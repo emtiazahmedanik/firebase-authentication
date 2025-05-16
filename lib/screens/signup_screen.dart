@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:practicing_firebase_authentication/screens/home_page.dart';
+import 'package:practicing_firebase_authentication/screens/verification_email_screen.dart';
 import 'package:practicing_firebase_authentication/services/auth_service.dart';
 import 'package:practicing_firebase_authentication/services/network_client.dart';
 import 'package:practicing_firebase_authentication/widgets/snackbar.dart';
@@ -73,17 +75,27 @@ class _SignupScreenState extends State<SignupScreen> {
 
   void _onTapSignupButton() {
     if (_formKey.currentState!.validate()) {
-       _signUp();
+      _signUp();
     }
   }
-  Future<void> _signUp() async{
-    print('call from signup');
-    final NetworkClient response = await AuthService.createAccount(email: _emailController.text.trim(),
-        password: _passwordController.text);
-    if(response.isSuccess){
 
-    }else{
-      showBottomSnackbar(message: response.errorMessage, context: context, isError: true);
+  Future<void> _signUp() async {
+    print('call from signup');
+    final NetworkClient response = await AuthService.createAccount(
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+    );
+    if (response.isSuccess) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => VerificationEmailScreen()),
+      );
+    } else {
+      showBottomSnackbar(
+        message: response.errorMessage,
+        context: context,
+        isError: true,
+      );
     }
   }
 }

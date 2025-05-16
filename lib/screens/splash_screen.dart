@@ -1,4 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:practicing_firebase_authentication/screens/home_page.dart';
+import 'package:practicing_firebase_authentication/screens/signup_screen.dart';
+import 'package:practicing_firebase_authentication/services/auth_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -11,14 +15,20 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
+    AuthService.firebaseAuth.authStateChanges().listen((user) {
+      if (user != null) {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomePage()));
+      } else {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SignupScreen()));
+      }
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: CircularProgressIndicator()),
+      body: Center(child: CircularProgressIndicator())
     );
   }
 }
