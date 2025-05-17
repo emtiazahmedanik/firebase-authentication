@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:practicing_firebase_authentication/screens/home_page.dart';
-import 'package:practicing_firebase_authentication/screens/login_screen.dart';
+import 'package:practicing_firebase_authentication/screens/signup_screen.dart';
 import 'package:practicing_firebase_authentication/screens/verification_email_screen.dart';
 import 'package:practicing_firebase_authentication/services/auth_service.dart';
 import 'package:practicing_firebase_authentication/services/network_client.dart';
 import 'package:practicing_firebase_authentication/widgets/snackbar.dart';
 
-class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<SignupScreen> createState() => _SignupScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -22,7 +22,7 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Column(children: [Text("SignUp"), Text("Create Account")]),
+        title: Column(children: [Text("LogIn")]),
         centerTitle: true,
       ),
       body: Padding(
@@ -60,22 +60,18 @@ class _SignupScreenState extends State<SignupScreen> {
                 },
               ),
               ElevatedButton(
-                onPressed: _onTapSignupButton,
+                onPressed: _onTapLogInButton,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   foregroundColor: Colors.white,
                 ),
-                child: Text("sign up"),
+                child: Text("Log In"),
               ),
               TextButton(
-                onPressed: () {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginScreen()),
-                    (predicate) => false,
-                  );
-                },
-                child: Text("LogIn"),
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>SignupScreen()));
+                  },
+                  child: Text("Create New Account")
               ),
             ],
           ),
@@ -84,22 +80,23 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-  void _onTapSignupButton() {
+  void _onTapLogInButton() {
     if (_formKey.currentState!.validate()) {
-      _signUp();
+      _logIn();
     }
   }
 
-  Future<void> _signUp() async {
+  Future<void> _logIn() async {
     print('call from signup');
-    final NetworkClient response = await AuthService.createAccount(
+    final NetworkClient response = await AuthService.login(
       email: _emailController.text.trim(),
       password: _passwordController.text,
     );
     if (response.isSuccess) {
-      Navigator.push(
+      Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => VerificationEmailScreen()),
+        MaterialPageRoute(builder: (context) => HomePage()),
+          (pre)=>false
       );
     } else {
       showBottomSnackbar(

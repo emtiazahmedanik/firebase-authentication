@@ -51,4 +51,45 @@ class AuthService {
       return NetworkClient(isSuccess: false, errorMessage: e.toString());
     }
   }
+
+  static Future<NetworkClient> login({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      print('inside try');
+      credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email,
+          password: password
+      );
+
+      //print(credential);
+      return NetworkClient(isSuccess: true, errorMessage: '');
+
+    } on FirebaseAuthException catch (e) {
+      String errorMsg = "";
+      if (e.code == 'user-not-found') {
+        errorMsg = 'user-not-found';
+      } else if (e.code == 'wrong-password') {
+        errorMsg = 'wrong-password';
+      }
+      print(errorMsg);
+      return NetworkClient(isSuccess: false, errorMessage: errorMsg);
+
+    } catch (e) {
+      print(e.toString());
+      return NetworkClient(isSuccess: false, errorMessage: e.toString());
+
+    }
+  }
+
+  static Future<NetworkClient> signOut() async{
+    try{
+      await FirebaseAuth.instance.signOut();
+      return NetworkClient(isSuccess: true, errorMessage: '');
+    }catch(e){
+      return NetworkClient(isSuccess: false, errorMessage: e.toString());
+    }
+
+  }
 }
